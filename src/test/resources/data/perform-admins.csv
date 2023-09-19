@@ -1,2 +1,1 @@
 ADMINHOST,ADMINNAME,ADMINADDRESS,ADMINPASSWORD,ADMINID,COMPANYBASEURL,ADMINAPIHOST,TSIMURL
-admin.stagbot.io,bwayne,wombatsecurity.com,Password123!,65017,ws01-stagbot.io,adminapi.stagbot.io,tsim-stage.threatsim.net/wombatauth
