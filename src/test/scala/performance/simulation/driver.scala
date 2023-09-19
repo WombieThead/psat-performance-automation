@@ -17,11 +17,11 @@ class driver extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.9")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
 
-//  setUp(Authenticate.userLoginFullScn.inject(atOnceUsers(1))).protocols(httpProtocol)
+  setUp(Authenticate.userLoginFullScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 //  setUp(Authenticate.userLoginMinimalScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 //  setUp(AdminAuthenticate.adminLoginFullScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 //  setUp(AdminAuthenticate.adminLoginMinimalScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 //  setUp(CompanyCreate.companyCreateScn.inject(atOnceUsers(1))).protocols(CompanyCreate.httpProtocol)
-  setUp(UserCreate.createUserScn.inject(atOnceUsers(1))).protocols(httpProtocol)
+//  setUp(UserCreate.createUserScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 
 }
