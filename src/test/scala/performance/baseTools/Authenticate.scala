@@ -306,7 +306,7 @@ object Authenticate {
 
 // --------------------------------------
 
-	val csvUsers = csv(filePath = "data/perform-users.csv").circular
+	val csvUsers = csv(filePath = "data/perform-companies.csv").circular
 
 	def encodeCreds(username: String, password: String): String = {
 		new String(java.util.Base64.getEncoder.encode((username + ":" + password).getBytes()))

@@ -51,7 +51,7 @@ object UserCreate {
 
   // --------------------------------------
 
-  val csvUsers = csv(filePath = "data/perform-users.csv").circular
+  val csvUsers = csv(filePath = "data/perform-companies.csv").circular
 
   def randomString(length: Int) = {
     Random.alphanumeric.filter(_.isLower).take(length).mkString

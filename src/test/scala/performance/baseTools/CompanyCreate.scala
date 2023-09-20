@@ -242,6 +242,8 @@ object CompanyCreate {
       http("GET /companies/COMPANYID")
         .get("https://#{ADMINHOST}/companies/#{COMPANYID}")
         .headers(headers_0)
+        .check(jsonPath(path = "$.data.subDomain").exists.saveAs(key = "ALIAS"))
+        .check(jsonPath(path = "$.data.companyUuid").exists.saveAs(key = "COMPANYUUID"))
     )
   }
 
@@ -258,6 +260,7 @@ object CompanyCreate {
       http("GET /admins")
         .get("https://#{ADMINHOST}/admins?companyId=#{COMPANYID}&_=1692196747945")
         .headers(headers_0)
+        .check(jsonPath(path = "$.data[0].id").exists.saveAs(key = "ADMINID"))
     )
   }
 
@@ -359,6 +362,24 @@ object CompanyCreate {
     }; session}
   }
 
+  def genCSVFile(): ChainBuilder = {
+    exec { session => {
+      val alias       = session("ALIAS").as[String]
+      val host        = session("HOST").as[String]
+      val companyID   = session("COMPANYID").as[String]
+      val companyUuid = session("COMPANYUUID").as[String]
+      val userAddress = alias + ".com"
+      val userName    = "super.user"
+      val adminID     = session("ADMINID").as[String]
+      val password    = session("PASSWORD").as[String]
+
+      val fileWriter = new FileWriter(new File("company-stage-" + alias + ".csv"))
+      fileWriter.write("ALIAS,HOST,COMPANYID,COMPANYUUID,USERADDRESS,USERNAME,USERID,PASSWORD\n")
+      fileWriter.write(alias + "," + host + "," + companyID + "," + companyUuid + "," + userAddress + "," + userName + "," + adminID + "," + password + "\n")
+      fileWriter.close()
+    }; session}
+  }
+
   def purgeFiles(): ChainBuilder = {
     exec { session => {
       val alias = session("ALIAS").as[String]
@@ -429,5 +450,6 @@ object CompanyCreate {
     .exec(purgeFiles())
     .exec(get_companies())
     .exec(put_companies())
+    .exec(genCSVFile())
 
 }
