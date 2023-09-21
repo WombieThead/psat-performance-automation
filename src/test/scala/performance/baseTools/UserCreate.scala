@@ -77,8 +77,8 @@ object UserCreate {
         // Set all vals before session assignment
         // Later we will make these env/config values
         val batchNum = 0
-        val maxRequestSize = 2
-        val userSize = 5
+        val maxRequestSize = 200
+        val userSize = 1000
         val tagSize = 8
         val source = "userSync"
 
