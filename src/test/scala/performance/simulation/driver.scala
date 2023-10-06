@@ -2,12 +2,9 @@ package performance.simulation
 
 import io.gatling.core.Predef.Simulation
 
-import scala.concurrent.duration._
 import io.gatling.core.Predef._
-import io.gatling.core.structure
 import io.gatling.http.Predef._
-import io.gatling.core.structure.ChainBuilder
-import performance.baseTools.{AdminAuthenticate, Authenticate, CompanyCreate, UserCreate}
+import performance.baseTools.{AdminAuthenticate, Authenticate, CompanyCreate, UserCreate, UserList}
 
 class driver extends Simulation {
   private val httpProtocol = http
@@ -21,7 +18,8 @@ class driver extends Simulation {
 //  setUp(Authenticate.userLoginMinimalScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 //  setUp(AdminAuthenticate.adminLoginFullScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 //  setUp(AdminAuthenticate.adminLoginMinimalScn.inject(atOnceUsers(1))).protocols(httpProtocol)
-  setUp(CompanyCreate.companyCreateScn.inject(atOnceUsers(1))).protocols(CompanyCreate.httpProtocol)
+//  setUp(CompanyCreate.companyCreateScn.inject(atOnceUsers(1))).protocols(CompanyCreate.httpProtocol)
 //  setUp(UserCreate.createUserScn.inject(atOnceUsers(1))).protocols(httpProtocol)
+  setUp(UserList.listUserScn.inject(atOnceUsers(1))).protocols(httpProtocol)
 
 }

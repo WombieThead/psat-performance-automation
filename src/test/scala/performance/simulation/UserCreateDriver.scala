@@ -2,12 +2,9 @@ package performance.simulation
 
 import io.gatling.core.Predef.Simulation
 
-import scala.concurrent.duration._
 import io.gatling.core.Predef._
-import io.gatling.core.structure
 import io.gatling.http.Predef._
-import io.gatling.core.structure.ChainBuilder
-import performance.baseTools.{AdminAuthenticate, Authenticate, CompanyCreate, UserCreate}
+import performance.baseTools.UserCreate
 
 class UserCreateDriver extends Simulation {
   private val httpProtocol = http
@@ -17,7 +14,5 @@ class UserCreateDriver extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.9")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
 
-
     setUp(UserCreate.createUserScn.inject(atOnceUsers(1))).protocols(httpProtocol)
-
 }

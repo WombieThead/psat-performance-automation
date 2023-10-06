@@ -1,23 +1,13 @@
 package performance.baseTools
 
-import scala.concurrent.duration._
 import io.gatling.core.Predef._
-import io.gatling.core.structure
 import io.gatling.http.Predef._
 import io.gatling.core.structure.ChainBuilder
 
 import java.time.LocalDate
 import scala.util.Random
-import performance.baseTools.Authenticate._
 
 object UserCreate {
-
-  val httpProtocol = http
-    .inferHtmlResources(AllowList(), DenyList(""".*\.js""", """.*\.css""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.ico""", """.*\.woff""", """.*\.woff2""", """.*\.(t|o)tf""", """.*\.png""", """.*\.svg""", """.*detectportal\.firefox\.com.*"""))
-    .acceptHeader("application/vnd.api+json")
-    .acceptEncodingHeader("gzip, deflate, br")
-    .acceptLanguageHeader("en-US,en;q=0.9")
-    .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
 
   private val headers_1 = Map(
     "postman-token" -> "59a36899-679f-88a1-2451-83c9497de766",
@@ -87,7 +77,6 @@ object UserCreate {
 
         val corrid = java.util.UUID.randomUUID.toString
 
-        val companyName = "gatling"
         session.set("BATCHNUMBER", batchNum)
           .set("MAXREQUESTSIZE", maxRequestSize)
           .set("USERSIZE", userSize)
@@ -114,7 +103,7 @@ object UserCreate {
       for (user <- 1 to maxUsers) {
         val firstName = randomString(6)
         val lastName = randomString(6)
-        if (user !=(1)) jsonData += ","
+        if (user != 1) jsonData += ","
         jsonData += "{ \"attributes\": { \"firstName\": \"" + firstName +
           "\", \"lastName\": \"" + lastName +
           "\", \"emailAddress\": \"" + firstName + "." + lastName + "@" + session("USERADDRESS").as[String] + "\""
