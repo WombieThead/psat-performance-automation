@@ -1,11 +1,8 @@
 package performance.baseTools
 
-import scala.concurrent.duration._
 import io.gatling.core.Predef._
 import io.gatling.core.structure.ChainBuilder
 import io.gatling.http.Predef._
-import io.gatling.jdbc.Predef._
-import performance.baseTools.UserCreate.headers_1
 
 import java.io.{File, FileWriter}
 
@@ -46,8 +43,6 @@ object UserList {
 
 	// --------------------------------------
 
-	val csvUsers = csv(filePath = "data/perform-companies.csv").circular
-
 	def initialize(): ChainBuilder = {
 		exec { session => {
 			val alias = session("ALIAS").as[String]
@@ -63,7 +58,6 @@ object UserList {
 		}
 	}
 
-
 	def appendCSVFile(): ChainBuilder = {
 		exec { session => {
 			val alias         = session("ALIAS").as[String]
@@ -76,7 +70,7 @@ object UserList {
 
 			val fileWriter = new FileWriter(new File("company-stage-" + alias + ".csv"), true)
 
-			for ( i <- 0 to userAddresses.length - 1 ) {
+			for ( i <- userAddresses.indices ) {
 				val address = userAddresses(i).split("@")
 				fileWriter.write(alias + "," + host + "," + companyID + "," + companyUuid + "," + address(1) + "," + address(0) + "," + userIDs(i) + "," + password + "\n")
 			}
@@ -93,7 +87,7 @@ object UserList {
 	// --------------------------------------
 
 	val listUserScn = scenario("List users via API")
-		.feed(csvUsers)
+		.feed(Authenticate.csvCompanies)
 		.exec(Authenticate.initialize())
 		.exec(Authenticate.post_jwt())
 		.exec(initialize())

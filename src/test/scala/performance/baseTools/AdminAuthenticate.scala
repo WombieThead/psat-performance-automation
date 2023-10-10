@@ -1,7 +1,5 @@
 package performance.baseTools
 
-import scala.concurrent.duration._
-
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 
@@ -70,6 +68,20 @@ object AdminAuthenticate {
   		"x-requested-with" -> "XMLHttpRequest"
   )
 
+	private val headers_14 = Map(
+		"accept-encoding" -> "gzip, deflate, br",
+		"accept-language" -> "en-US,en;q=0.9",
+		"content-type" -> "application/json; charset=UTF-8",
+		//  		"origin" -> "https://admin.stagbot.io",
+		"sec-ch-ua" -> """Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115""",
+		"sec-ch-ua-mobile" -> "?0",
+		"sec-ch-ua-platform" -> "macOS",
+		"sec-fetch-dest" -> "empty",
+		"sec-fetch-mode" -> "cors",
+		"sec-fetch-site" -> "same-origin",
+		"x-requested-with" -> "XMLHttpRequest"
+	)
+
 	// --------------------------------------
 
 	def get_root(): ChainBuilder = {
@@ -130,6 +142,15 @@ object AdminAuthenticate {
 			http("GET /companies")
 				.get("https://#{ADMINHOST}/companies?draw=1&columns%5B0%5D%5Bdata%5D=function&columns%5B0%5D%5Bname%5D=&columns%5B0%5D%5Bsearchable%5D=true&columns%5B0%5D%5Borderable%5D=true&columns%5B0%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B0%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B1%5D%5Bdata%5D=licenseType&columns%5B1%5D%5Bname%5D=&columns%5B1%5D%5Bsearchable%5D=true&columns%5B1%5D%5Borderable%5D=true&columns%5B1%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B1%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B2%5D%5Bdata%5D=id&columns%5B2%5D%5Bname%5D=&columns%5B2%5D%5Bsearchable%5D=true&columns%5B2%5D%5Borderable%5D=true&columns%5B2%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B2%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B3%5D%5Bdata%5D=companyUuid&columns%5B3%5D%5Bname%5D=&columns%5B3%5D%5Bsearchable%5D=true&columns%5B3%5D%5Borderable%5D=true&columns%5B3%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B3%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B4%5D%5Bdata%5D=industry&columns%5B4%5D%5Bname%5D=&columns%5B4%5D%5Bsearchable%5D=true&columns%5B4%5D%5Borderable%5D=true&columns%5B4%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B4%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B5%5D%5Bdata%5D=subDomain&columns%5B5%5D%5Bname%5D=&columns%5B5%5D%5Bsearchable%5D=true&columns%5B5%5D%5Borderable%5D=true&columns%5B5%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B5%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B6%5D%5Bdata%5D=details&columns%5B6%5D%5Bname%5D=&columns%5B6%5D%5Bsearchable%5D=true&columns%5B6%5D%5Borderable%5D=false&columns%5B6%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B6%5D%5Bsearch%5D%5Bregex%5D=false&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc&start=0&length=25&search%5Bvalue%5D=&search%5Bregex%5D=false&sortField=name&sortOrder=asc&searchColumns%5B%5D=name&searchColumns%5B%5D=id&searchColumns%5B%5D=legalName&searchColumns%5B%5D=abbreviation&deletedCompanies=false&_=1692107985795")
 				.headers(headers_7)
+		)
+	}
+
+	def post_keepAlive(): ChainBuilder = {
+		exec(
+			http("POST /auth/keepAlive")
+				.post("https://#{ADMINHOST}/auth/keepAlive")
+				.headers(headers_14)
+				.body(StringBody(string = "{\"accessToken\":null}"))
 		)
 	}
 

@@ -304,7 +304,7 @@ object Authenticate {
 
 // --------------------------------------
 
-	val csvUsers = csv(filePath = "data/perform-companies.csv").circular
+	val csvCompanies = csv(filePath = "data/perform-companies.csv").circular
 
 	def encodeCreds(username: String, password: String): String = {
 		new String(java.util.Base64.getEncoder.encode((username + ":" + password).getBytes()))
@@ -321,7 +321,7 @@ object Authenticate {
 	// --------------------------------------
 
 	val userLoginFullScn = scenario("User ember full login with password")
-		.feed(csvUsers)
+		.feed(csvCompanies)
 		.exec( initialize())
 //		.exec { session => println("USER: " + session("USERNAME").as[String] + "@" + session("USERADDRESS").as[String]); session }
 //		.exec { session => println("PASSWORD: " + session("PASSWORD").as[String]); session }
@@ -378,7 +378,7 @@ object Authenticate {
     .exec(get_jobStatus())
 
 	val userLoginMinimalScn = scenario("JWT Authenticate Only")
-		.feed(csvUsers)
+		.feed(csvCompanies)
 		.exec(initialize())
 		.exec(post_jwt())
 //		.exec { session => println("JWT auth token: " + session("jwtToken").as[String]); session }

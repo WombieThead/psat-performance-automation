@@ -5,6 +5,7 @@ import io.gatling.http.Predef._
 import io.gatling.core.structure.ChainBuilder
 
 import java.time.LocalDate
+import java.io.{File, FileWriter}
 import scala.util.Random
 
 object UserCreate {
@@ -40,9 +41,6 @@ object UserCreate {
   }
 
   // --------------------------------------
-
-  val csvUsers = csv(filePath = "data/perform-companies.csv").circular
-
   def randomString(length: Int) = {
     Random.alphanumeric.filter(_.isLower).take(length).mkString
   }
@@ -99,14 +97,22 @@ object UserCreate {
       val batchId = java.util.UUID.randomUUID.toString
       var maxUsers = if ((batchNumber == batches) & (leftover != 0)) leftover else session("MAXREQUESTSIZE").as[Int]
 
+      val baseName = session("ALIAS").as[String]
+      val fileName = baseName + ".csv"
+      val fileWriter = new FileWriter(new File(fileName), false)
+      fileWriter.write("\"Email Address\"\n")
+
       var jsonData = ""
       for (user <- 1 to maxUsers) {
         val firstName = randomString(6)
         val lastName = randomString(6)
+        val emailAddress = firstName + "." + lastName + "@" + session("USERADDRESS").as[String]
+        fileWriter.write(emailAddress + "\n")
+
         if (user != 1) jsonData += ","
         jsonData += "{ \"attributes\": { \"firstName\": \"" + firstName +
           "\", \"lastName\": \"" + lastName +
-          "\", \"emailAddress\": \"" + firstName + "." + lastName + "@" + session("USERADDRESS").as[String] + "\""
+          "\", \"emailAddress\": \"" + emailAddress + "\""
         for (tag <- 1 to tagSize) {
           val tagName = "tag" + tag
           val tagValue = "value" + randomNumber(3)
@@ -114,6 +120,8 @@ object UserCreate {
         }
         jsonData += ", \"groups\": [] }, \"relationships\": \"\", \"type\": \"users\" }"
       }
+      fileWriter.close()
+
       session.set("JSONDATA_NEWUSERS", jsonData)
         .set("BATCHNUMBER", batchNumber)
         .set("BATCHID", batchId)
@@ -124,14 +132,19 @@ object UserCreate {
   // --------------------------------------
 
   val createUserScn = scenario("Create Users via API")
-    .feed(csvUsers)
+    .feed(Authenticate.csvCompanies)
     .exec(Authenticate.initialize())
     .exec(Authenticate.post_jwt())
+    .feed(AdminAuthenticate.csvAdmins)
+    .exec(AdminAuthenticate.post_authLogin())
+    .exec(CompanyCreate.genBlobFile())
     .exec(initialize())
     .repeat("#{BATCHES}","BATCH") {
       exec(initCreateUser())
         .exec(post_users())
-//        .exec { session => println("JSONDATA_NEWUSERS :" + session("JSONDATA_NEWUSERS").as[String]); session }
+        .pause(15) // Needed between user POST and password POST
+        .exec(CompanyCreate.post_bulkPasswordChange())
+      //        .exec { session => println("JSONDATA_NEWUSERS :" + session("JSONDATA_NEWUSERS").as[String]); session }
 //        .exec { session => println("SOURCE :" + session("SOURCE").as[String]); session }
 //        .exec { session => println("BATCHNUMBER :" + session("BATCHNUMBER").as[String]); session }
 //        .exec { session => println("BATCH :" + session("BATCH").as[String]); session }
@@ -140,6 +153,7 @@ object UserCreate {
 //        .exec { session => println("BATCHES :" + session("BATCHES").as[String]); session }
 //        .exec { session => println("USERSIZE :" + session("USERSIZE").as[String]); session }
     }
+//    .exec(CompanyCreate.purgeFiles())
 //    .exec { session => println("JWT auth token: " + session("jwtToken").as[String]); session }
 //    .exec { session => println("MAXREQUESTSIZE :" + session("MAXREQUESTSIZE").as[String]); session }
 //    .exec { session => println("BATCHES :" + session("BATCHES").as[String]); session }

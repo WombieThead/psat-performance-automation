@@ -1,14 +1,12 @@
 package performance.baseTools
 
-import scala.concurrent.duration._
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.core.structure.ChainBuilder
-import performance.baseTools.Authenticate.initialize
 
 import java.time.LocalDate
 import scala.util.Random
-import java.io.{File, FileWriter, PrintStream}
+import java.io.{File, FileWriter}
 
 object CompanyCreate {
 
@@ -356,10 +354,6 @@ object CompanyCreate {
   }
 
   // --------------------------------------
-
-  val csvAdmins = csv(filePath = "data/perform-admins.csv").circular
-  val csvUsers = csv(filePath = "data/perform-companies.csv").circular
-
   def randomString(length: Int) = {
     Random.alphanumeric.filter(_.isLower).take(length).mkString
   }
@@ -382,7 +376,7 @@ object CompanyCreate {
           .set("HOST","ws01-stagbot.io")
           .set("COMPANYID","")
           .set("COMPANYUUID","")
-          .set("USERADDRESS",(companyName + ".com"))
+          .set("USERADDRESS",companyName + ".com")
           .set("USERNAME","super.user")
           .set("USERID","")
           .set("PASSWORD","Proofpoint2023!")
@@ -444,12 +438,11 @@ object CompanyCreate {
   // --------------------------------------
 
   val companyCreateScn = scenario("Company Create")
-    .feed(csvAdmins)
+    .feed(AdminAuthenticate.csvAdmins)
+    .exec(AdminAuthenticate.post_authLogin())
     .exec(initialize())
     .exec(genPasswordFile())
-    .exec { session => println("ALIAS: " + session("ALIAS").as[String]); session }
-    .exec(AdminAuthenticate.post_authLogin())
-
+//    .exec { session => println("ALIAS: " + session("ALIAS").as[String]); session }
     .exec(get_feature())
     .exec(get_languages())
     .exec(get_nda())
@@ -503,8 +496,4 @@ object CompanyCreate {
     .exec(get_companies())
     .exec(put_companies())
     .exec(genCSVFile())
-//    .feed(csvUsers)
-//    .exec(Authenticate.initialize())
-//    .exec(Authenticate.post_jwt())
-//    .exec(post_bulkModuleAvailability())
 }
